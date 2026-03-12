@@ -1,0 +1,181 @@
+@startuml LMSClassDiagram
+
+'=== Core & DB ===
+class LibraryApp {
+  +init()
+  +start(stage)
+  -showLogin(stage)
+  -showDashboard(stage, user: User)
+}
+
+class DatabaseManager {
+  -jdbcUrl: String
+  +DatabaseManager(fileName: String)
+  +getConnection(): Connection
+}
+
+'=== Models ===
+class Book {
+  -id: long
+  -title: String
+  -author: String
+  -isbn: String
+  -totalCopies: int
+  -availableCopies: int
+  -createdAt: LocalDateTime
+}
+
+class User {
+  -id: long
+  -username: String
+  -fullName: String
+  -passwordHash: String
+  -role: UserRole
+  -createdAt: LocalDateTime
+}
+
+enum UserRole {
+  LIBRARIAN
+  STUDENT
+}
+
+class Loan {
+  -id: long
+  -bookId: long
+  -userId: long
+  -issuedAt: LocalDateTime
+  -dueDate: LocalDate
+  -returnedAt: LocalDateTime
+  -fineDue: double
+  -finePaidAt: LocalDateTime
+}
+
+class LoanDetails {
+  -loanId: long
+  -bookId: long
+  -userId: long
+  -bookTitle: String
+  -userName: String
+  -issuedAt: LocalDateTime
+  -dueDate: LocalDate
+  -returned: boolean
+  -fineDue: double
+}
+
+'=== Repositories ===
+class BookRepository {
+  -databaseManager: DatabaseManager
+  +save(book: Book): Book
+  +update(book: Book): void
+  +findById(id: long): Optional<Book>
+  +findAll(): List<Book>
+}
+
+class UserRepository {
+  -databaseManager: DatabaseManager
+  +save(user: User): User
+  +findByUsername(username: String): Optional<User>
+  +findAll(): List<User>
+  +findByRole(role: UserRole): List<User>
+  +findById(id: long): Optional<User>
+  +countByRole(role: UserRole): long
+}
+
+class LoanRepository {
+  -databaseManager: DatabaseManager
+  +save(loan: Loan): Loan
+  +findById(id: long): Optional<Loan>
+  +findActiveLoanForBook(bookId: long): Optional<Loan>
+  +findActiveLoanDetails(): List<LoanDetails>
+  +findLoanDetailsByUser(userId: long): List<LoanDetails>
+  +markReturned(loanId: long, returnedAt: LocalDateTime): void
+  +updateDueDate(loanId: long, newDueDate: LocalDate): void
+  +updateFineDue(loanId: long, newFineDue: double): void
+  +markFinePaid(loanId: long, paidAt: LocalDateTime): void
+}
+
+'=== Services ===
+class AuthService {
+  -userRepository: UserRepository
+  +login(username: String, password: String): User
+  +register(fullName: String, username: String, password: String, role: UserRole): User
+  +listUsers(): List<User>
+  +listStudents(): List<User>
+  +hasLibrarian(): boolean
+}
+
+class LibraryService {
+  -bookRepository: BookRepository
+  -loanRepository: LoanRepository
+  -userRepository: UserRepository
+  +listBooks(): List<Book>
+  +addBook(title, author, isbn, copies): Book
+  +issueBook(bookId: long, userId: long, dueDate: LocalDate): void
+  +returnBook(loanId: long): void
+  +listActiveLoans(): List<LoanDetails>
+  +listLoansForUser(userId: long): List<LoanDetails>
+  +reissueLoan(loanId: long, newDueDate: LocalDate): void
+  +payFine(loanId: long): void
+}
+
+class PasswordHasher {
+  +hash(raw: String): String
+}
+
+'=== Views (JavaFX) ===
+class LoginView {
+  -authService: AuthService
+  -onLoginSuccess: Consumer<User>
+}
+
+class DashboardView {
+  -loggedInUser: User
+  -libraryService: LibraryService
+  -authService: AuthService
+  -logoutHandler: Runnable
+}
+
+'=== Relationships ===
+LibraryApp --> DatabaseManager
+LibraryApp --> AuthService
+LibraryApp --> LibraryService
+LibraryApp --> LoginView
+LibraryApp --> DashboardView
+
+DatabaseManager ..> "uses" Connection
+
+BookRepository --> DatabaseManager
+UserRepository --> DatabaseManager
+LoanRepository --> DatabaseManager
+
+AuthService --> UserRepository
+AuthService --> PasswordHasher
+AuthService --> User
+AuthService --> UserRole
+
+LibraryService --> BookRepository
+LibraryService --> LoanRepository
+LibraryService --> UserRepository
+LibraryService --> Book
+LibraryService --> Loan
+LibraryService --> LoanDetails
+LibraryService --> User
+LibraryService --> UserRole
+
+LoanRepository --> Loan
+LoanRepository --> LoanDetails
+BookRepository --> Book
+UserRepository --> User
+User --> UserRole
+
+DashboardView --> User
+DashboardView --> LibraryService
+DashboardView --> AuthService
+DashboardView ..> Book
+DashboardView ..> LoanDetails
+
+LoginView --> AuthService
+LoginView --> User
+LoginView --> UserRole
+
+@enduml
