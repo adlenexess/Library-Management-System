@@ -1,5 +1,8 @@
 package com.library.view;
 
+import java.net.URL;
+import java.time.LocalDate;
+
 import com.library.exception.LibraryException;
 import com.library.model.Book;
 import com.library.model.LoanDetails;
@@ -7,15 +10,31 @@ import com.library.model.User;
 import com.library.model.UserRole;
 import com.library.service.AuthService;
 import com.library.service.LibraryService;
+
 import javafx.beans.binding.Bindings;
-import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -23,9 +42,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-
-import java.net.URL;
-import java.time.LocalDate;
 
 public class DashboardView extends BorderPane {
 
@@ -110,6 +126,7 @@ public class DashboardView extends BorderPane {
         return container;
     }
 
+    @SuppressWarnings("unchecked")
     private TableView<Book> createBookTable() {
         TableView<Book> table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
@@ -273,6 +290,7 @@ public class DashboardView extends BorderPane {
         return form;
     }
 
+    @SuppressWarnings("unchecked")
     private TableView<LoanDetails> createLoanTable(boolean showBorrowerColumn) {
         TableView<LoanDetails> table = new TableView<>();
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
@@ -487,6 +505,7 @@ public class DashboardView extends BorderPane {
         return container;
     }
 
+    @SuppressWarnings("unchecked")
     private Node buildUsersTab() {
         VBox container = new VBox(16);
         container.setPadding(new Insets(16));

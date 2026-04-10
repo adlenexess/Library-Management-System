@@ -1,23 +1,28 @@
 package com.library.view;
 
+import java.net.URL;
+import java.util.function.Consumer;
+
 import com.library.exception.LibraryException;
 import com.library.model.User;
 import com.library.model.UserRole;
 import com.library.service.AuthService;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-
-import java.net.URL;
-
-import java.util.function.Consumer;
 
 public class LoginView extends BorderPane {
 
